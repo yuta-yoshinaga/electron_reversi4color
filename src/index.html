@@ -34,7 +34,7 @@
                             <label class="btn btn-info btn-sm">
                                 <input type="radio" autocomplete="off" value="0">一人</label>
                             <label class="btn btn-info btn-sm">
-                                <input type="radio" autocomplete="off" value="1">二人</label>
+                                <input type="radio" autocomplete="off" value="1">四人</label>
                         </div>
                         <hr>
                     </div>
@@ -46,8 +46,8 @@
                                 <input type="radio" autocomplete="off" value="0">弱い</label>
                             <label class="btn btn-info btn-sm">
                                 <input type="radio" autocomplete="off" value="1">普通</label>
-                            <label class="btn btn-info btn-sm">
-                                <input type="radio" autocomplete="off" value="2">強い</label>
+                            <!--<label class="btn btn-info btn-sm">
+                                <input type="radio" autocomplete="off" value="2">強い</label>-->
                         </div>
                         <hr>
                     </div>
@@ -59,6 +59,10 @@
                                 <input type="radio" autocomplete="off" value="1">ﾌﾟﾚｲﾔｰ1</label>
                             <label class="btn btn-info btn-sm">
                                 <input type="radio" autocomplete="off" value="2">ﾌﾟﾚｲﾔｰ2</label>
+                            <label class="btn btn-info btn-sm">
+                                <input type="radio" autocomplete="off" value="3">ﾌﾟﾚｲﾔｰ3</label>
+                            <label class="btn btn-info btn-sm">
+                                <input type="radio" autocomplete="off" value="4">ﾌﾟﾚｲﾔｰ4</label>
                         </div>
                         <hr>
                     </div>
@@ -101,8 +105,8 @@
                         <div>縦横マス数</div>
                         <hr>
                         <div class="btn-group" data-toggle="buttons">
-                            <label class="btn btn-info btn-sm">
-                                <input type="radio" autocomplete="off" value="0">6</label>
+                            <!--<label class="btn btn-info btn-sm">
+                                <input type="radio" autocomplete="off" value="0">6</label>-->
                             <label class="btn btn-info btn-sm">
                                 <input type="radio" autocomplete="off" value="1">8</label>
                             <label class="btn btn-info btn-sm">
@@ -173,6 +177,22 @@
                         </div>
                         <hr>
                     </div>
+                    <div class="appMenuGrp col-sm-4 col-xs-6" id="mPlayerColor3">
+                        <div>プレイヤー3のコマの色</div>
+                        <hr>
+                        <div>
+                            <input id="playerColor3" type="text" class="minicolor" data-control="wheel" value="#0000ff" style="height:34px;">
+                        </div>
+                        <hr>
+                    </div>
+                    <div class="appMenuGrp col-sm-4 col-xs-6" id="mPlayerColor4">
+                        <div>プレイヤー4のコマの色</div>
+                        <hr>
+                        <div>
+                            <input id="playerColor4" type="text" class="minicolor" data-control="wheel" value="#ff0000" style="height:34px;">
+                        </div>
+                        <hr>
+                    </div>
                     <div class="appMenuGrp col-sm-4 col-xs-6" id="mBackGroundColor">
                         <div>マス背景の色</div>
                         <hr>
@@ -205,6 +225,7 @@
     </script>
     <script src="./js/bootstrap.min.js"></script>
     <script src="./js/jquery.minicolors.min.js"></script>
+<!--
     <script src="./js/ReversiPoint.min.js"></script>
     <script src="./js/ReversiHistory.min.js"></script>
     <script src="./js/ReversiAnz.min.js"></script>
@@ -212,6 +233,14 @@
     <script src="./js/ReversiSetting.min.js"></script>
     <script src="./js/ReversiPlay.min.js"></script>
     <script src="./js/func.min.js"></script>
+-->
+    <script src="./js/ReversiPoint.js"></script>
+    <script src="./js/ReversiHistory.js"></script>
+    <script src="./js/ReversiAnz.js"></script>
+    <script src="./js/Reversi.js"></script>
+    <script src="./js/ReversiSetting.js"></script>
+    <script src="./js/ReversiPlay.js"></script>
+    <script src="./js/func.js"></script>
 </body>
 
 </html>

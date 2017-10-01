@@ -40,6 +40,13 @@ body{
     background-color: #000;
 }
 
+.stone_blue {
+    background-color: #00f;
+}
+.stone_red {
+    background-color: #f00;
+}
+
 .cell_back_green {
     background-color: #00FF00;
 }

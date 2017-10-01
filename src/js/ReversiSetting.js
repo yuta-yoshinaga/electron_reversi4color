@@ -63,7 +63,7 @@ var ReversiSetting = (function () {
     ////////////////////////////////////////////////////////////////////////////////
     function ReversiSetting() {
         this.mMode = DEF_MODE_ONE; //!< 現在のモード
-        this.mType = DEF_TYPE_HARD; //!< 現在のタイプ
+        this.mType = DEF_TYPE_NOR; //!< 現在のタイプ
         this.mPlayer = REVERSI_STS_BLACK; //!< プレイヤーの色
         this.mAssist = DEF_ASSIST_ON; //!< アシスト
         this.mGameSpd = DEF_GAME_SPD_MID; //!< ゲームスピード
@@ -76,8 +76,10 @@ var ReversiSetting = (function () {
         this.mEndInterVal = 500; //!< 終了アニメーションのインターバル(msec)
         this.mTheme = 'Cerulean'; //!< テーマ名
         this.mPlayerColor1 = '#000000'; //!< プレイヤー1の色
-        this.mPlayerColor2 = '#ffffff'; //!< プレイヤー2の色
-        this.mBackGroundColor = '#00ff00'; //!< 背景の色
+        this.mPlayerColor2 = '#FFFFFF'; //!< プレイヤー2の色
+        this.mPlayerColor3 = '#0000FF'; //!< プレイヤー3の色
+        this.mPlayerColor4 = '#FF0000'; //!< プレイヤー4の色
+        this.mBackGroundColor = '#00FF00'; //!< 背景の色
         this.mBorderColor = '#000000'; //!< 枠線の色
     }
     return ReversiSetting;

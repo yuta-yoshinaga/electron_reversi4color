@@ -21,8 +21,10 @@
 var REVERSI_STS_NONE = 0; //!< コマ無し
 var REVERSI_STS_BLACK = 1; //!< 黒
 var REVERSI_STS_WHITE = 2; //!< 白
+var REVERSI_STS_BLUE = 3; //!< 青
+var REVERSI_STS_RED = 4; //!< 赤
 var REVERSI_STS_MIN = 0; //!< ステータス最小値
-var REVERSI_STS_MAX = 2; //!< ステータス最大値
+var REVERSI_STS_MAX = 4; //!< ステータス最大値
 var REVERSI_MASU_CNT = 8; //!< 縦横マス数
 ////////////////////////////////////////////////////////////////////////////////
 /**	@class		Reversi
@@ -52,6 +54,14 @@ var Reversi = (function () {
         this.mMasuStsCntW = new Array();
         this.mMasuStsPassW = new Array();
         this.mMasuStsAnzW = new Array();
+        this.mMasuStsEnaL = new Array();
+        this.mMasuStsCntL = new Array();
+        this.mMasuStsPassL = new Array();
+        this.mMasuStsAnzL = new Array();
+        this.mMasuStsEnaR = new Array();
+        this.mMasuStsCntR = new Array();
+        this.mMasuStsPassR = new Array();
+        this.mMasuStsAnzR = new Array();
         for (var i = 0; i < this.mMasuCntMax; i++) {
             this.mMasuSts[i] = new Array();
             this.mMasuStsEnaB[i] = new Array();
@@ -62,6 +72,14 @@ var Reversi = (function () {
             this.mMasuStsCntW[i] = new Array();
             this.mMasuStsPassW[i] = new Array();
             this.mMasuStsAnzW[i] = new Array();
+            this.mMasuStsEnaL[i] = new Array();
+            this.mMasuStsCntL[i] = new Array();
+            this.mMasuStsPassL[i] = new Array();
+            this.mMasuStsAnzL[i] = new Array();
+            this.mMasuStsEnaR[i] = new Array();
+            this.mMasuStsCntR[i] = new Array();
+            this.mMasuStsPassR[i] = new Array();
+            this.mMasuStsAnzR[i] = new Array();
             for (var j = 0; j < this.mMasuCntMax; j++) {
                 this.mMasuSts[i][j] = REVERSI_STS_NONE;
                 this.mMasuStsEnaB[i][j] = REVERSI_STS_NONE;
@@ -72,18 +90,34 @@ var Reversi = (function () {
                 this.mMasuStsCntW[i][j] = REVERSI_STS_NONE;
                 this.mMasuStsPassW[i][j] = REVERSI_STS_NONE;
                 this.mMasuStsAnzW[i][j] = new ReversiAnz();
+                this.mMasuStsEnaL[i][j] = REVERSI_STS_NONE;
+                this.mMasuStsCntL[i][j] = REVERSI_STS_NONE;
+                this.mMasuStsPassL[i][j] = REVERSI_STS_NONE;
+                this.mMasuStsAnzL[i][j] = new ReversiAnz();
+                this.mMasuStsEnaR[i][j] = REVERSI_STS_NONE;
+                this.mMasuStsCntR[i][j] = REVERSI_STS_NONE;
+                this.mMasuStsPassR[i][j] = REVERSI_STS_NONE;
+                this.mMasuStsAnzR[i][j] = new ReversiAnz();
             }
         }
         this.mMasuPointB = new Array();
         this.mMasuPointW = new Array();
+        this.mMasuPointL = new Array();
+        this.mMasuPointR = new Array();
         for (var i = 0; i < (this.mMasuCntMax * this.mMasuCntMax); i++) {
             this.mMasuPointB[i] = new ReversiPoint();
             this.mMasuPointW[i] = new ReversiPoint();
+            this.mMasuPointL[i] = new ReversiPoint();
+            this.mMasuPointR[i] = new ReversiPoint();
         }
         this.mMasuPointCntB = 0;
         this.mMasuPointCntW = 0;
+        this.mMasuPointCntL = 0;
+        this.mMasuPointCntR = 0;
         this.mMasuBetCntB = 0;
         this.mMasuBetCntW = 0;
+        this.mMasuBetCntL = 0;
+        this.mMasuBetCntR = 0;
         this.mMasuHist = new Array();
         for (var i = 0; i < (this.mMasuCntMax * this.mMasuCntMax); i++) {
             this.mMasuHist[i] = new ReversiHistory();
@@ -108,14 +142,32 @@ var Reversi = (function () {
                 this.mMasuStsAnzB[i][j].reset();
                 this.mMasuStsPassW[i][j] = 0;
                 this.mMasuStsAnzW[i][j].reset();
+                this.mMasuStsPassL[i][j] = 0;
+                this.mMasuStsAnzL[i][j].reset();
+                this.mMasuStsPassR[i][j] = 0;
+                this.mMasuStsAnzR[i][j].reset();
             }
         }
-        this.mMasuSts[(this.mMasuCnt >> 1) - 1][(this.mMasuCnt >> 1) - 1] = REVERSI_STS_BLACK;
-        this.mMasuSts[(this.mMasuCnt >> 1) - 1][(this.mMasuCnt >> 1)] = REVERSI_STS_WHITE;
-        this.mMasuSts[(this.mMasuCnt >> 1)][(this.mMasuCnt >> 1) - 1] = REVERSI_STS_WHITE;
-        this.mMasuSts[(this.mMasuCnt >> 1)][(this.mMasuCnt >> 1)] = REVERSI_STS_BLACK;
+        this.mMasuSts[(this.mMasuCnt >> 2)][(this.mMasuCnt >> 2)] = REVERSI_STS_BLACK;
+        this.mMasuSts[(this.mMasuCnt >> 2) + 1][(this.mMasuCnt >> 2) + 1] = REVERSI_STS_BLACK;
+        this.mMasuSts[(this.mMasuCnt - ((this.mMasuCnt >> 2) + 2))][(this.mMasuCnt >> 2)] = REVERSI_STS_BLACK;
+        this.mMasuSts[(this.mMasuCnt - ((this.mMasuCnt >> 2) + 1))][(this.mMasuCnt >> 2) + 1] = REVERSI_STS_BLACK;
+        this.mMasuSts[(this.mMasuCnt >> 2)][(this.mMasuCnt >> 2) + 1] = REVERSI_STS_WHITE;
+        this.mMasuSts[(this.mMasuCnt >> 2) + 1][(this.mMasuCnt >> 2)] = REVERSI_STS_WHITE;
+        this.mMasuSts[(this.mMasuCnt - ((this.mMasuCnt >> 2) + 2))][(this.mMasuCnt - ((this.mMasuCnt >> 2) + 2))] = REVERSI_STS_WHITE;
+        this.mMasuSts[(this.mMasuCnt - ((this.mMasuCnt >> 2) + 1))][(this.mMasuCnt - ((this.mMasuCnt >> 2) + 1))] = REVERSI_STS_WHITE;
+        this.mMasuSts[(this.mMasuCnt >> 2)][(this.mMasuCnt - ((this.mMasuCnt >> 2) + 1))] = REVERSI_STS_BLUE;
+        this.mMasuSts[(this.mMasuCnt >> 2) + 1][(this.mMasuCnt - ((this.mMasuCnt >> 2) + 2))] = REVERSI_STS_BLUE;
+        this.mMasuSts[(this.mMasuCnt - ((this.mMasuCnt >> 2) + 2))][(this.mMasuCnt >> 2) + 1] = REVERSI_STS_BLUE;
+        this.mMasuSts[(this.mMasuCnt - ((this.mMasuCnt >> 2) + 1))][(this.mMasuCnt >> 2)] = REVERSI_STS_BLUE;
+        this.mMasuSts[(this.mMasuCnt >> 2)][(this.mMasuCnt - ((this.mMasuCnt >> 2) + 2))] = REVERSI_STS_RED;
+        this.mMasuSts[(this.mMasuCnt >> 2) + 1][(this.mMasuCnt - ((this.mMasuCnt >> 2) + 1))] = REVERSI_STS_RED;
+        this.mMasuSts[(this.mMasuCnt - ((this.mMasuCnt >> 2) + 2))][(this.mMasuCnt - ((this.mMasuCnt >> 2) + 1))] = REVERSI_STS_RED;
+        this.mMasuSts[(this.mMasuCnt - ((this.mMasuCnt >> 2) + 1))][(this.mMasuCnt - ((this.mMasuCnt >> 2) + 2))] = REVERSI_STS_RED;
         this.makeMasuSts(REVERSI_STS_BLACK);
         this.makeMasuSts(REVERSI_STS_WHITE);
+        this.makeMasuSts(REVERSI_STS_BLUE);
+        this.makeMasuSts(REVERSI_STS_RED);
         this.mMasuHistCur = 0;
         this.mMasuStsOld = $.extend(true, [], this.mMasuSts);
     };
@@ -144,9 +196,17 @@ var Reversi = (function () {
                     this.mMasuStsEnaB[i][j] = 0;
                     this.mMasuStsCntB[i][j] = 0;
                 }
-                else {
+                else if (color == REVERSI_STS_WHITE) {
                     this.mMasuStsEnaW[i][j] = 0;
                     this.mMasuStsCntW[i][j] = 0;
+                }
+                else if (color == REVERSI_STS_BLUE) {
+                    this.mMasuStsEnaL[i][j] = 0;
+                    this.mMasuStsCntL[i][j] = 0;
+                }
+                else {
+                    this.mMasuStsEnaR[i][j] = 0;
+                    this.mMasuStsCntR[i][j] = 0;
                 }
             }
         }
@@ -156,19 +216,35 @@ var Reversi = (function () {
                 this.mMasuPointB[i].x = 0;
                 this.mMasuPointB[i].y = 0;
             }
-            else {
+            else if (color == REVERSI_STS_WHITE) {
                 this.mMasuPointW[i].x = 0;
                 this.mMasuPointW[i].y = 0;
+            }
+            else if (color == REVERSI_STS_BLUE) {
+                this.mMasuPointL[i].x = 0;
+                this.mMasuPointL[i].y = 0;
+            }
+            else {
+                this.mMasuPointR[i].x = 0;
+                this.mMasuPointR[i].y = 0;
             }
         }
         if (color == REVERSI_STS_BLACK) {
             this.mMasuPointCntB = 0;
         }
-        else {
+        else if (color == REVERSI_STS_WHITE) {
             this.mMasuPointCntW = 0;
+        }
+        else if (color == REVERSI_STS_BLUE) {
+            this.mMasuPointCntL = 0;
+        }
+        else {
+            this.mMasuPointCntR = 0;
         }
         this.mMasuBetCntB = 0;
         this.mMasuBetCntW = 0;
+        this.mMasuBetCntL = 0;
+        this.mMasuBetCntR = 0;
         for (var i = 0; i < this.mMasuCnt; i++) {
             for (var j = 0; j < this.mMasuCnt; j++) {
                 okflg = 0;
@@ -287,13 +363,29 @@ var Reversi = (function () {
                             this.mMasuPointB[this.mMasuPointCntB].x = j;
                             this.mMasuPointCntB++;
                         }
-                        else {
+                        else if (color == REVERSI_STS_WHITE) {
                             this.mMasuStsEnaW[i][j] = 1;
                             this.mMasuStsCntW[i][j] = count2;
                             // *** 置ける場所をリニアに保存、置けるポイント数も保存 *** //
                             this.mMasuPointW[this.mMasuPointCntW].y = i;
                             this.mMasuPointW[this.mMasuPointCntW].x = j;
                             this.mMasuPointCntW++;
+                        }
+                        else if (color == REVERSI_STS_BLUE) {
+                            this.mMasuStsEnaL[i][j] = 1;
+                            this.mMasuStsCntL[i][j] = count2;
+                            // *** 置ける場所をリニアに保存、置けるポイント数も保存 *** //
+                            this.mMasuPointL[this.mMasuPointCntL].y = i;
+                            this.mMasuPointL[this.mMasuPointCntL].x = j;
+                            this.mMasuPointCntL++;
+                        }
+                        else {
+                            this.mMasuStsEnaR[i][j] = 1;
+                            this.mMasuStsCntR[i][j] = count2;
+                            // *** 置ける場所をリニアに保存、置けるポイント数も保存 *** //
+                            this.mMasuPointR[this.mMasuPointCntR].y = i;
+                            this.mMasuPointR[this.mMasuPointCntR].x = j;
+                            this.mMasuPointCntR++;
                         }
                         ret = 0;
                         if (countMax < count2)
@@ -306,6 +398,12 @@ var Reversi = (function () {
                 else if (this.mMasuSts[i][j] == REVERSI_STS_WHITE) {
                     this.mMasuBetCntW++;
                 }
+                else if (this.mMasuSts[i][j] == REVERSI_STS_BLUE) {
+                    this.mMasuBetCntL++;
+                }
+                else if (this.mMasuSts[i][j] == REVERSI_STS_RED) {
+                    this.mMasuBetCntR++;
+                }
             }
         }
         // *** 一番枚数を獲得できるマスを設定 *** //
@@ -316,9 +414,19 @@ var Reversi = (function () {
                         this.mMasuStsEnaB[i][j] = 2;
                     }
                 }
-                else {
+                else if (color == REVERSI_STS_WHITE) {
                     if (this.mMasuStsEnaW[i][j] != 0 && this.mMasuStsCntW[i][j] == countMax) {
                         this.mMasuStsEnaW[i][j] = 2;
+                    }
+                }
+                else if (color == REVERSI_STS_BLUE) {
+                    if (this.mMasuStsEnaL[i][j] != 0 && this.mMasuStsCntL[i][j] == countMax) {
+                        this.mMasuStsEnaL[i][j] = 2;
+                    }
+                }
+                else {
+                    if (this.mMasuStsEnaR[i][j] != 0 && this.mMasuStsCntR[i][j] == countMax) {
+                        this.mMasuStsEnaR[i][j] = 2;
                     }
                 }
             }
@@ -546,14 +654,18 @@ var Reversi = (function () {
             var tmpMasu = $.extend(true, [], this.mMasuSts);
             var tmpMasuEnaB = $.extend(true, [], this.mMasuStsEnaB);
             var tmpMasuEnaW = $.extend(true, [], this.mMasuStsEnaW);
+            var tmpMasuEnaL = $.extend(true, [], this.mMasuStsEnaL);
+            var tmpMasuEnaR = $.extend(true, [], this.mMasuStsEnaR);
             tmpY = this.mMasuPointB[cnt].y;
             tmpX = this.mMasuPointB[cnt].x;
             this.mMasuSts[tmpY][tmpX] = REVERSI_STS_BLACK; // 仮に置く
             this.revMasuSts(REVERSI_STS_BLACK, tmpY, tmpX); // 仮にひっくり返す
             this.makeMasuSts(REVERSI_STS_BLACK);
             this.makeMasuSts(REVERSI_STS_WHITE);
+            this.makeMasuSts(REVERSI_STS_BLUE);
+            this.makeMasuSts(REVERSI_STS_RED);
             // *** このマスに置いた場合の解析を行う *** //
-            if (this.getColorEna(REVERSI_STS_WHITE) != 0) {
+            if (this.getColorEna(REVERSI_STS_WHITE) != 0 && this.getColorEna(REVERSI_STS_BLUE) != 0 && this.getColorEna(REVERSI_STS_RED) != 0) {
                 this.mMasuStsPassB[tmpY][tmpX] = 1;
             }
             if (this.getEdgeSideZero(tmpY, tmpX) == 0) {
@@ -619,6 +731,70 @@ var Reversi = (function () {
                         if (tmpMasuEnaW[i][j] != 0)
                             tmpBadPoint = 0; // ステータス変化していないなら
                     }
+                    if (this.getMasuStsEna(REVERSI_STS_BLUE, i, j) != 0) {
+                        sum += this.mMasuStsCntL[i][j]; // 相手の獲得予定枚数
+                        // *** 相手の獲得予定の最大数保持 *** //
+                        if (this.mMasuStsAnzB[tmpY][tmpX].max < this.mMasuStsCntL[i][j])
+                            this.mMasuStsAnzB[tmpY][tmpX].max = this.mMasuStsCntL[i][j];
+                        // *** 相手の獲得予定の最小数保持 *** //
+                        if (this.mMasuStsCntL[i][j] < this.mMasuStsAnzB[tmpY][tmpX].min)
+                            this.mMasuStsAnzB[tmpY][tmpX].min = this.mMasuStsCntL[i][j];
+                        this.mMasuStsAnzB[tmpY][tmpX].pointCnt++; // 相手の置ける場所の数
+                        if (this.getEdgeSideZero(i, j) == 0) {
+                            this.mMasuStsAnzB[tmpY][tmpX].edgeCnt++;
+                            tmpBadPoint = 100000 * this.mMasuStsCntL[i][j];
+                        }
+                        else if (this.getEdgeSideOne(i, j) == 0) {
+                            this.mMasuStsAnzB[tmpY][tmpX].edgeSideOneCnt++;
+                            tmpBadPoint = 0;
+                        }
+                        else if (this.getEdgeSideTwo(i, j) == 0) {
+                            this.mMasuStsAnzB[tmpY][tmpX].edgeSideTwoCnt++;
+                            tmpBadPoint = 1 * this.mMasuStsCntL[i][j];
+                        }
+                        else if (this.getEdgeSideThree(i, j) == 0) {
+                            this.mMasuStsAnzB[tmpY][tmpX].edgeSideThreeCnt++;
+                            tmpBadPoint = 1 * this.mMasuStsCntL[i][j];
+                        }
+                        else {
+                            this.mMasuStsAnzB[tmpY][tmpX].edgeSideOtherCnt++;
+                            tmpBadPoint = 1 * this.mMasuStsCntL[i][j];
+                        }
+                        if (tmpMasuEnaL[i][j] != 0)
+                            tmpBadPoint = 0; // ステータス変化していないなら
+                    }
+                    if (this.getMasuStsEna(REVERSI_STS_RED, i, j) != 0) {
+                        sum += this.mMasuStsCntR[i][j]; // 相手の獲得予定枚数
+                        // *** 相手の獲得予定の最大数保持 *** //
+                        if (this.mMasuStsAnzB[tmpY][tmpX].max < this.mMasuStsCntR[i][j])
+                            this.mMasuStsAnzB[tmpY][tmpX].max = this.mMasuStsCntR[i][j];
+                        // *** 相手の獲得予定の最小数保持 *** //
+                        if (this.mMasuStsCntR[i][j] < this.mMasuStsAnzB[tmpY][tmpX].min)
+                            this.mMasuStsAnzB[tmpY][tmpX].min = this.mMasuStsCntR[i][j];
+                        this.mMasuStsAnzB[tmpY][tmpX].pointCnt++; // 相手の置ける場所の数
+                        if (this.getEdgeSideZero(i, j) == 0) {
+                            this.mMasuStsAnzB[tmpY][tmpX].edgeCnt++;
+                            tmpBadPoint = 100000 * this.mMasuStsCntR[i][j];
+                        }
+                        else if (this.getEdgeSideOne(i, j) == 0) {
+                            this.mMasuStsAnzB[tmpY][tmpX].edgeSideOneCnt++;
+                            tmpBadPoint = 0;
+                        }
+                        else if (this.getEdgeSideTwo(i, j) == 0) {
+                            this.mMasuStsAnzB[tmpY][tmpX].edgeSideTwoCnt++;
+                            tmpBadPoint = 1 * this.mMasuStsCntR[i][j];
+                        }
+                        else if (this.getEdgeSideThree(i, j) == 0) {
+                            this.mMasuStsAnzB[tmpY][tmpX].edgeSideThreeCnt++;
+                            tmpBadPoint = 1 * this.mMasuStsCntR[i][j];
+                        }
+                        else {
+                            this.mMasuStsAnzB[tmpY][tmpX].edgeSideOtherCnt++;
+                            tmpBadPoint = 1 * this.mMasuStsCntR[i][j];
+                        }
+                        if (tmpMasuEnaR[i][j] != 0)
+                            tmpBadPoint = 0; // ステータス変化していないなら
+                    }
                     if (this.getMasuStsEna(REVERSI_STS_BLACK, i, j) != 0) {
                         sumOwn += this.mMasuStsCntB[i][j]; // 自分の獲得予定枚数
                         // *** 自分の獲得予定の最大数保持 *** //
@@ -658,9 +834,11 @@ var Reversi = (function () {
                 }
             }
             // *** 相手に取られる平均コマ数 *** //
-            if (this.getPointCnt(REVERSI_STS_WHITE) != 0) {
+            if (this.getPointCnt(REVERSI_STS_WHITE) != 0 || this.getPointCnt(REVERSI_STS_BLUE) != 0 || this.getPointCnt(REVERSI_STS_RED) != 0) {
                 tmpD1 = sum;
                 tmpD2 = this.getPointCnt(REVERSI_STS_WHITE);
+                tmpD2 += this.getPointCnt(REVERSI_STS_BLUE);
+                tmpD2 += this.getPointCnt(REVERSI_STS_RED);
                 this.mMasuStsAnzB[tmpY][tmpX].avg = tmpD1 / tmpD2;
             }
             // *** 自分が取れる平均コマ数 *** //
@@ -673,6 +851,8 @@ var Reversi = (function () {
             this.mMasuSts = $.extend(true, [], tmpMasu);
             this.makeMasuSts(REVERSI_STS_BLACK);
             this.makeMasuSts(REVERSI_STS_WHITE);
+            this.makeMasuSts(REVERSI_STS_BLUE);
+            this.makeMasuSts(REVERSI_STS_RED);
         }
     };
     ////////////////////////////////////////////////////////////////////////////////
@@ -697,14 +877,18 @@ var Reversi = (function () {
             var tmpMasu = $.extend(true, [], this.mMasuSts);
             var tmpMasuEnaB = $.extend(true, [], this.mMasuStsEnaB);
             var tmpMasuEnaW = $.extend(true, [], this.mMasuStsEnaW);
+            var tmpMasuEnaL = $.extend(true, [], this.mMasuStsEnaL);
+            var tmpMasuEnaR = $.extend(true, [], this.mMasuStsEnaR);
             tmpY = this.mMasuPointW[cnt].y;
             tmpX = this.mMasuPointW[cnt].x;
             this.mMasuSts[tmpY][tmpX] = REVERSI_STS_WHITE; // 仮に置く
             this.revMasuSts(REVERSI_STS_WHITE, tmpY, tmpX); // 仮にひっくり返す
             this.makeMasuSts(REVERSI_STS_BLACK);
             this.makeMasuSts(REVERSI_STS_WHITE);
+            this.makeMasuSts(REVERSI_STS_BLUE);
+            this.makeMasuSts(REVERSI_STS_RED);
             // *** このマスに置いた場合の解析を行う *** //
-            if (this.getColorEna(REVERSI_STS_BLACK) != 0) {
+            if (this.getColorEna(REVERSI_STS_BLACK) != 0 && this.getColorEna(REVERSI_STS_BLUE) != 0 && this.getColorEna(REVERSI_STS_RED) != 0) {
                 this.mMasuStsPassW[tmpY][tmpX] = 1;
             }
             if (this.getEdgeSideZero(tmpY, tmpX) == 0) {
@@ -770,6 +954,70 @@ var Reversi = (function () {
                         if (tmpMasuEnaB[i][j] != 0)
                             tmpBadPoint = 0; // ステータス変化していないなら
                     }
+                    if (this.getMasuStsEna(REVERSI_STS_BLUE, i, j) != 0) {
+                        sum += this.mMasuStsCntL[i][j]; // 相手の獲得予定枚数
+                        // *** 相手の獲得予定の最大数保持 *** //
+                        if (this.mMasuStsAnzW[tmpY][tmpX].max < this.mMasuStsCntL[i][j])
+                            this.mMasuStsAnzW[tmpY][tmpX].max = this.mMasuStsCntL[i][j];
+                        // *** 相手の獲得予定の最小数保持 *** //
+                        if (this.mMasuStsCntL[i][j] < this.mMasuStsAnzW[tmpY][tmpX].min)
+                            this.mMasuStsAnzW[tmpY][tmpX].min = this.mMasuStsCntL[i][j];
+                        this.mMasuStsAnzW[tmpY][tmpX].pointCnt++; // 相手の置ける場所の数
+                        if (this.getEdgeSideZero(i, j) == 0) {
+                            this.mMasuStsAnzW[tmpY][tmpX].edgeCnt++;
+                            tmpBadPoint = 100000 * this.mMasuStsCntL[i][j];
+                        }
+                        else if (this.getEdgeSideOne(i, j) == 0) {
+                            this.mMasuStsAnzW[tmpY][tmpX].edgeSideOneCnt++;
+                            tmpBadPoint = 0;
+                        }
+                        else if (this.getEdgeSideTwo(i, j) == 0) {
+                            this.mMasuStsAnzW[tmpY][tmpX].edgeSideTwoCnt++;
+                            tmpBadPoint = 1 * this.mMasuStsCntL[i][j];
+                        }
+                        else if (this.getEdgeSideThree(i, j) == 0) {
+                            this.mMasuStsAnzW[tmpY][tmpX].edgeSideThreeCnt++;
+                            tmpBadPoint = 1 * this.mMasuStsCntL[i][j];
+                        }
+                        else {
+                            this.mMasuStsAnzW[tmpY][tmpX].edgeSideOtherCnt++;
+                            tmpBadPoint = 1 * this.mMasuStsCntL[i][j];
+                        }
+                        if (tmpMasuEnaL[i][j] != 0)
+                            tmpBadPoint = 0; // ステータス変化していないなら
+                    }
+                    if (this.getMasuStsEna(REVERSI_STS_RED, i, j) != 0) {
+                        sum += this.mMasuStsCntR[i][j]; // 相手の獲得予定枚数
+                        // *** 相手の獲得予定の最大数保持 *** //
+                        if (this.mMasuStsAnzW[tmpY][tmpX].max < this.mMasuStsCntR[i][j])
+                            this.mMasuStsAnzW[tmpY][tmpX].max = this.mMasuStsCntR[i][j];
+                        // *** 相手の獲得予定の最小数保持 *** //
+                        if (this.mMasuStsCntR[i][j] < this.mMasuStsAnzW[tmpY][tmpX].min)
+                            this.mMasuStsAnzW[tmpY][tmpX].min = this.mMasuStsCntR[i][j];
+                        this.mMasuStsAnzW[tmpY][tmpX].pointCnt++; // 相手の置ける場所の数
+                        if (this.getEdgeSideZero(i, j) == 0) {
+                            this.mMasuStsAnzW[tmpY][tmpX].edgeCnt++;
+                            tmpBadPoint = 100000 * this.mMasuStsCntR[i][j];
+                        }
+                        else if (this.getEdgeSideOne(i, j) == 0) {
+                            this.mMasuStsAnzW[tmpY][tmpX].edgeSideOneCnt++;
+                            tmpBadPoint = 0;
+                        }
+                        else if (this.getEdgeSideTwo(i, j) == 0) {
+                            this.mMasuStsAnzW[tmpY][tmpX].edgeSideTwoCnt++;
+                            tmpBadPoint = 1 * this.mMasuStsCntR[i][j];
+                        }
+                        else if (this.getEdgeSideThree(i, j) == 0) {
+                            this.mMasuStsAnzW[tmpY][tmpX].edgeSideThreeCnt++;
+                            tmpBadPoint = 1 * this.mMasuStsCntR[i][j];
+                        }
+                        else {
+                            this.mMasuStsAnzW[tmpY][tmpX].edgeSideOtherCnt++;
+                            tmpBadPoint = 1 * this.mMasuStsCntR[i][j];
+                        }
+                        if (tmpMasuEnaR[i][j] != 0)
+                            tmpBadPoint = 0; // ステータス変化していないなら
+                    }
                     if (this.getMasuStsEna(REVERSI_STS_WHITE, i, j) != 0) {
                         sumOwn += this.mMasuStsCntW[i][j]; // 自分の獲得予定枚数
                         // *** 自分の獲得予定の最大数保持 *** //
@@ -809,9 +1057,11 @@ var Reversi = (function () {
                 }
             }
             // *** 相手に取られる平均コマ数 *** //
-            if (this.getPointCnt(REVERSI_STS_BLACK) != 0) {
+            if (this.getPointCnt(REVERSI_STS_BLACK) != 0 || this.getPointCnt(REVERSI_STS_BLUE) != 0 || this.getPointCnt(REVERSI_STS_RED) != 0) {
                 tmpD1 = sum;
                 tmpD2 = this.getPointCnt(REVERSI_STS_BLACK);
+                tmpD2 += this.getPointCnt(REVERSI_STS_BLUE);
+                tmpD2 += this.getPointCnt(REVERSI_STS_RED);
                 this.mMasuStsAnzW[tmpY][tmpX].avg = tmpD1 / tmpD2;
             }
             // *** 自分が取れる平均コマ数 *** //
@@ -824,19 +1074,471 @@ var Reversi = (function () {
             this.mMasuSts = $.extend(true, [], tmpMasu);
             this.makeMasuSts(REVERSI_STS_BLACK);
             this.makeMasuSts(REVERSI_STS_WHITE);
+            this.makeMasuSts(REVERSI_STS_BLUE);
+            this.makeMasuSts(REVERSI_STS_RED);
         }
     };
     ////////////////////////////////////////////////////////////////////////////////
-    /**	@brief			解析を行う
-     *	@fn				public AnalysisReversi(bPassEna : number,wPassEna : number) : void
-     *	@param[in]		bPassEna : number		1=黒パス有効
-     *	@param[in]		wPassEna : number		1=白パス有効
+    /**	@brief			解析を行う(青)
+     *	@fn				private AnalysisReversiBlue(): void
      *	@return			ありません
      *	@author			Yuta Yoshinaga
      *	@date			2017.06.01
      */
     ////////////////////////////////////////////////////////////////////////////////
-    Reversi.prototype.AnalysisReversi = function (bPassEna, wPassEna) {
+    Reversi.prototype.AnalysisReversiBlue = function () {
+        var tmpX;
+        var tmpY;
+        var sum;
+        var sumOwn;
+        var tmpGoodPoint;
+        var tmpBadPoint;
+        var tmpD1;
+        var tmpD2;
+        for (var cnt = 0; cnt < this.mMasuPointCntL; cnt++) {
+            // *** 現在ステータスを一旦コピー *** //
+            var tmpMasu = $.extend(true, [], this.mMasuSts);
+            var tmpMasuEnaB = $.extend(true, [], this.mMasuStsEnaB);
+            var tmpMasuEnaW = $.extend(true, [], this.mMasuStsEnaW);
+            var tmpMasuEnaL = $.extend(true, [], this.mMasuStsEnaL);
+            var tmpMasuEnaR = $.extend(true, [], this.mMasuStsEnaR);
+            tmpY = this.mMasuPointL[cnt].y;
+            tmpX = this.mMasuPointL[cnt].x;
+            this.mMasuSts[tmpY][tmpX] = REVERSI_STS_BLUE; // 仮に置く
+            this.revMasuSts(REVERSI_STS_BLUE, tmpY, tmpX); // 仮にひっくり返す
+            this.makeMasuSts(REVERSI_STS_BLACK);
+            this.makeMasuSts(REVERSI_STS_WHITE);
+            this.makeMasuSts(REVERSI_STS_BLUE);
+            this.makeMasuSts(REVERSI_STS_RED);
+            // *** このマスに置いた場合の解析を行う *** //
+            if (this.getColorEna(REVERSI_STS_BLACK) != 0 && this.getColorEna(REVERSI_STS_WHITE) != 0 && this.getColorEna(REVERSI_STS_RED) != 0) {
+                // *** 相手がパス *** //
+                this.mMasuStsPassL[tmpY][tmpX] = 1;
+            }
+            if (this.getEdgeSideZero(tmpY, tmpX) == 0) {
+                this.mMasuStsAnzL[tmpY][tmpX].ownEdgeCnt++;
+                this.mMasuStsAnzL[tmpY][tmpX].goodPoint += 10000 * this.mMasuStsCntB[tmpY][tmpX];
+            }
+            else if (this.getEdgeSideOne(tmpY, tmpX) == 0) {
+                this.mMasuStsAnzL[tmpY][tmpX].ownEdgeSideOneCnt++;
+                if (this.checkEdge(REVERSI_STS_BLUE, tmpY, tmpX) != 0) {
+                    this.mMasuStsAnzL[tmpY][tmpX].goodPoint += 10 * this.mMasuStsCntB[tmpY][tmpX];
+                }
+                else {
+                    this.mMasuStsAnzL[tmpY][tmpX].badPoint += 100000;
+                }
+            }
+            else if (this.getEdgeSideTwo(tmpY, tmpX) == 0) {
+                this.mMasuStsAnzL[tmpY][tmpX].ownEdgeSideTwoCnt++;
+                this.mMasuStsAnzL[tmpY][tmpX].goodPoint += 1000 * this.mMasuStsCntB[tmpY][tmpX];
+            }
+            else if (this.getEdgeSideThree(tmpY, tmpX) == 0) {
+                this.mMasuStsAnzL[tmpY][tmpX].ownEdgeSideThreeCnt++;
+                this.mMasuStsAnzL[tmpY][tmpX].goodPoint += 100 * this.mMasuStsCntB[tmpY][tmpX];
+            }
+            else {
+                this.mMasuStsAnzL[tmpY][tmpX].ownEdgeSideOtherCnt++;
+                this.mMasuStsAnzL[tmpY][tmpX].goodPoint += 10 * this.mMasuStsCntB[tmpY][tmpX];
+            }
+            sum = 0;
+            sumOwn = 0;
+            for (var i = 0; i < this.mMasuCnt; i++) {
+                for (var j = 0; j < this.mMasuCnt; j++) {
+                    tmpBadPoint = 0;
+                    tmpGoodPoint = 0;
+                    if (this.getMasuStsEna(REVERSI_STS_BLACK, i, j) != 0) {
+                        sum += this.mMasuStsCntB[i][j]; // 相手の獲得予定枚数
+                        // *** 相手の獲得予定の最大数保持 *** //
+                        if (this.mMasuStsAnzL[tmpY][tmpX].max < this.mMasuStsCntB[i][j])
+                            this.mMasuStsAnzL[tmpY][tmpX].max = this.mMasuStsCntB[i][j];
+                        // *** 相手の獲得予定の最小数保持 *** //
+                        if (this.mMasuStsCntB[i][j] < this.mMasuStsAnzL[tmpY][tmpX].min)
+                            this.mMasuStsAnzL[tmpY][tmpX].min = this.mMasuStsCntB[i][j];
+                        this.mMasuStsAnzL[tmpY][tmpX].pointCnt++; // 相手の置ける場所の数
+                        if (this.getEdgeSideZero(i, j) == 0) {
+                            this.mMasuStsAnzL[tmpY][tmpX].edgeCnt++;
+                            tmpBadPoint = 100000 * this.mMasuStsCntB[i][j];
+                        }
+                        else if (this.getEdgeSideOne(i, j) == 0) {
+                            this.mMasuStsAnzL[tmpY][tmpX].edgeSideOneCnt++;
+                            tmpBadPoint = 0;
+                        }
+                        else if (this.getEdgeSideTwo(i, j) == 0) {
+                            this.mMasuStsAnzL[tmpY][tmpX].edgeSideTwoCnt++;
+                            tmpBadPoint = 1 * this.mMasuStsCntB[i][j];
+                        }
+                        else if (this.getEdgeSideThree(i, j) == 0) {
+                            this.mMasuStsAnzL[tmpY][tmpX].edgeSideThreeCnt++;
+                            tmpBadPoint = 1 * this.mMasuStsCntB[i][j];
+                        }
+                        else {
+                            this.mMasuStsAnzL[tmpY][tmpX].edgeSideOtherCnt++;
+                            tmpBadPoint = 1 * this.mMasuStsCntB[i][j];
+                        }
+                        if (tmpMasuEnaB[i][j] != 0)
+                            tmpBadPoint = 0; // ステータス変化していないなら
+                    }
+                    if (this.getMasuStsEna(REVERSI_STS_WHITE, i, j) != 0) {
+                        sum += this.mMasuStsCntW[i][j]; // 相手の獲得予定枚数
+                        // *** 相手の獲得予定の最大数保持 *** //
+                        if (this.mMasuStsAnzL[tmpY][tmpX].max < this.mMasuStsCntW[i][j])
+                            this.mMasuStsAnzL[tmpY][tmpX].max = this.mMasuStsCntW[i][j];
+                        // *** 相手の獲得予定の最小数保持 *** //
+                        if (this.mMasuStsCntW[i][j] < this.mMasuStsAnzL[tmpY][tmpX].min)
+                            this.mMasuStsAnzL[tmpY][tmpX].min = this.mMasuStsCntW[i][j];
+                        this.mMasuStsAnzL[tmpY][tmpX].pointCnt++; // 相手の置ける場所の数
+                        if (this.getEdgeSideZero(i, j) == 0) {
+                            this.mMasuStsAnzL[tmpY][tmpX].edgeCnt++;
+                            tmpBadPoint = 100000 * this.mMasuStsCntW[i][j];
+                        }
+                        else if (this.getEdgeSideOne(i, j) == 0) {
+                            this.mMasuStsAnzL[tmpY][tmpX].edgeSideOneCnt++;
+                            tmpBadPoint = 0;
+                        }
+                        else if (this.getEdgeSideTwo(i, j) == 0) {
+                            this.mMasuStsAnzL[tmpY][tmpX].edgeSideTwoCnt++;
+                            tmpBadPoint = 1 * this.mMasuStsCntW[i][j];
+                        }
+                        else if (this.getEdgeSideThree(i, j) == 0) {
+                            this.mMasuStsAnzL[tmpY][tmpX].edgeSideThreeCnt++;
+                            tmpBadPoint = 1 * this.mMasuStsCntW[i][j];
+                        }
+                        else {
+                            this.mMasuStsAnzL[tmpY][tmpX].edgeSideOtherCnt++;
+                            tmpBadPoint = 1 * this.mMasuStsCntW[i][j];
+                        }
+                        if (tmpMasuEnaW[i][j] != 0)
+                            tmpBadPoint = 0; // ステータス変化していないなら
+                    }
+                    if (this.getMasuStsEna(REVERSI_STS_RED, i, j) != 0) {
+                        sum += this.mMasuStsCntR[i][j]; // 相手の獲得予定枚数
+                        // *** 相手の獲得予定の最大数保持 *** //
+                        if (this.mMasuStsAnzL[tmpY][tmpX].max < this.mMasuStsCntR[i][j])
+                            this.mMasuStsAnzL[tmpY][tmpX].max = this.mMasuStsCntR[i][j];
+                        // *** 相手の獲得予定の最小数保持 *** //
+                        if (this.mMasuStsCntR[i][j] < this.mMasuStsAnzL[tmpY][tmpX].min)
+                            this.mMasuStsAnzL[tmpY][tmpX].min = this.mMasuStsCntR[i][j];
+                        this.mMasuStsAnzL[tmpY][tmpX].pointCnt++; // 相手の置ける場所の数
+                        if (this.getEdgeSideZero(i, j) == 0) {
+                            this.mMasuStsAnzL[tmpY][tmpX].edgeCnt++;
+                            tmpBadPoint = 100000 * this.mMasuStsCntR[i][j];
+                        }
+                        else if (this.getEdgeSideOne(i, j) == 0) {
+                            this.mMasuStsAnzL[tmpY][tmpX].edgeSideOneCnt++;
+                            tmpBadPoint = 0;
+                        }
+                        else if (this.getEdgeSideTwo(i, j) == 0) {
+                            this.mMasuStsAnzL[tmpY][tmpX].edgeSideTwoCnt++;
+                            tmpBadPoint = 1 * this.mMasuStsCntR[i][j];
+                        }
+                        else if (this.getEdgeSideThree(i, j) == 0) {
+                            this.mMasuStsAnzL[tmpY][tmpX].edgeSideThreeCnt++;
+                            tmpBadPoint = 1 * this.mMasuStsCntR[i][j];
+                        }
+                        else {
+                            this.mMasuStsAnzL[tmpY][tmpX].edgeSideOtherCnt++;
+                            tmpBadPoint = 1 * this.mMasuStsCntR[i][j];
+                        }
+                        if (tmpMasuEnaR[i][j] != 0)
+                            tmpBadPoint = 0; // ステータス変化していないなら
+                    }
+                    if (this.getMasuStsEna(REVERSI_STS_BLUE, i, j) != 0) {
+                        sumOwn += this.mMasuStsCntL[i][j]; // 自分の獲得予定枚数
+                        // *** 自分の獲得予定の最大数保持 *** //
+                        if (this.mMasuStsAnzL[tmpY][tmpX].ownMax < this.mMasuStsCntL[i][j])
+                            this.mMasuStsAnzL[tmpY][tmpX].ownMax = this.mMasuStsCntL[i][j];
+                        // *** 自分の獲得予定の最小数保持 *** //
+                        if (this.mMasuStsCntL[i][j] < this.mMasuStsAnzL[tmpY][tmpX].ownMin)
+                            this.mMasuStsAnzL[tmpY][tmpX].ownMin = this.mMasuStsCntL[i][j];
+                        this.mMasuStsAnzL[tmpY][tmpX].ownPointCnt++; // 自分の置ける場所の数
+                        if (this.getEdgeSideZero(i, j) == 0) {
+                            this.mMasuStsAnzL[tmpY][tmpX].ownEdgeCnt++;
+                            tmpGoodPoint = 100 * this.mMasuStsCntL[i][j];
+                        }
+                        else if (this.getEdgeSideOne(i, j) == 0) {
+                            this.mMasuStsAnzL[tmpY][tmpX].ownEdgeSideOneCnt++;
+                            tmpGoodPoint = 0;
+                        }
+                        else if (this.getEdgeSideTwo(i, j) == 0) {
+                            this.mMasuStsAnzL[tmpY][tmpX].ownEdgeSideTwoCnt++;
+                            tmpGoodPoint = 3 * this.mMasuStsCntL[i][j];
+                        }
+                        else if (this.getEdgeSideThree(i, j) == 0) {
+                            this.mMasuStsAnzL[tmpY][tmpX].ownEdgeSideThreeCnt++;
+                            tmpGoodPoint = 2 * this.mMasuStsCntL[i][j];
+                        }
+                        else {
+                            this.mMasuStsAnzL[tmpY][tmpX].ownEdgeSideOtherCnt++;
+                            tmpGoodPoint = 1 * this.mMasuStsCntL[i][j];
+                        }
+                        if (tmpMasuEnaL[i][j] != 0)
+                            tmpGoodPoint = 0; // ステータス変化していないなら
+                    }
+                    if (tmpBadPoint != 0)
+                        this.mMasuStsAnzL[tmpY][tmpX].badPoint += tmpBadPoint;
+                    if (tmpGoodPoint != 0)
+                        this.mMasuStsAnzL[tmpY][tmpX].goodPoint += tmpGoodPoint;
+                }
+            }
+            // *** 相手に取られる平均コマ数 *** //
+            if (this.getPointCnt(REVERSI_STS_BLACK) != 0 || this.getPointCnt(REVERSI_STS_WHITE) != 0 || this.getPointCnt(REVERSI_STS_RED) != 0) {
+                tmpD1 = sum;
+                tmpD2 = this.getPointCnt(REVERSI_STS_BLACK);
+                tmpD2 += this.getPointCnt(REVERSI_STS_WHITE);
+                tmpD2 += this.getPointCnt(REVERSI_STS_RED);
+                this.mMasuStsAnzL[tmpY][tmpX].avg = tmpD1 / tmpD2;
+            }
+            // *** 自分が取れる平均コマ数 *** //
+            if (this.getPointCnt(REVERSI_STS_BLUE) != 0) {
+                tmpD1 = sumOwn;
+                tmpD2 = this.getPointCnt(REVERSI_STS_BLUE);
+                this.mMasuStsAnzL[tmpY][tmpX].ownAvg = tmpD1 / tmpD2;
+            }
+            // *** 元に戻す *** //
+            this.mMasuSts = $.extend(true, [], tmpMasu);
+            this.makeMasuSts(REVERSI_STS_BLACK);
+            this.makeMasuSts(REVERSI_STS_WHITE);
+            this.makeMasuSts(REVERSI_STS_BLUE);
+            this.makeMasuSts(REVERSI_STS_RED);
+        }
+    };
+    ////////////////////////////////////////////////////////////////////////////////
+    /**	@brief			解析を行う(赤)
+     *	@fn				private AnalysisReversiRed(): void
+     *	@return			ありません
+     *	@author			Yuta Yoshinaga
+     *	@date			2017.06.01
+     */
+    ////////////////////////////////////////////////////////////////////////////////
+    Reversi.prototype.AnalysisReversiRed = function () {
+        var tmpX;
+        var tmpY;
+        var sum;
+        var sumOwn;
+        var tmpGoodPoint;
+        var tmpBadPoint;
+        var tmpD1;
+        var tmpD2;
+        for (var cnt = 0; cnt < this.mMasuPointCntR; cnt++) {
+            // *** 現在ステータスを一旦コピー *** //
+            var tmpMasu = $.extend(true, [], this.mMasuSts);
+            var tmpMasuEnaB = $.extend(true, [], this.mMasuStsEnaB);
+            var tmpMasuEnaW = $.extend(true, [], this.mMasuStsEnaW);
+            var tmpMasuEnaL = $.extend(true, [], this.mMasuStsEnaL);
+            var tmpMasuEnaR = $.extend(true, [], this.mMasuStsEnaR);
+            tmpY = this.mMasuPointR[cnt].y;
+            tmpX = this.mMasuPointR[cnt].x;
+            this.mMasuSts[tmpY][tmpX] = REVERSI_STS_RED; // 仮に置く
+            this.revMasuSts(REVERSI_STS_RED, tmpY, tmpX); // 仮にひっくり返す
+            this.makeMasuSts(REVERSI_STS_BLACK);
+            this.makeMasuSts(REVERSI_STS_WHITE);
+            this.makeMasuSts(REVERSI_STS_BLUE);
+            this.makeMasuSts(REVERSI_STS_RED);
+            // *** このマスに置いた場合の解析を行う *** //
+            if (this.getColorEna(REVERSI_STS_BLACK) != 0 && this.getColorEna(REVERSI_STS_WHITE) != 0 && this.getColorEna(REVERSI_STS_BLUE) != 0) {
+                // *** 相手がパス *** //
+                this.mMasuStsPassR[tmpY][tmpX] = 1;
+            }
+            if (this.getEdgeSideZero(tmpY, tmpX) == 0) {
+                this.mMasuStsAnzR[tmpY][tmpX].ownEdgeCnt++;
+                this.mMasuStsAnzR[tmpY][tmpX].goodPoint += 10000 * this.mMasuStsCntB[tmpY][tmpX];
+            }
+            else if (this.getEdgeSideOne(tmpY, tmpX) == 0) {
+                this.mMasuStsAnzR[tmpY][tmpX].ownEdgeSideOneCnt++;
+                if (this.checkEdge(REVERSI_STS_RED, tmpY, tmpX) != 0) {
+                    this.mMasuStsAnzR[tmpY][tmpX].goodPoint += 10 * this.mMasuStsCntB[tmpY][tmpX];
+                }
+                else {
+                    this.mMasuStsAnzR[tmpY][tmpX].badPoint += 100000;
+                }
+            }
+            else if (this.getEdgeSideTwo(tmpY, tmpX) == 0) {
+                this.mMasuStsAnzR[tmpY][tmpX].ownEdgeSideTwoCnt++;
+                this.mMasuStsAnzR[tmpY][tmpX].goodPoint += 1000 * this.mMasuStsCntB[tmpY][tmpX];
+            }
+            else if (this.getEdgeSideThree(tmpY, tmpX) == 0) {
+                this.mMasuStsAnzR[tmpY][tmpX].ownEdgeSideThreeCnt++;
+                this.mMasuStsAnzR[tmpY][tmpX].goodPoint += 100 * this.mMasuStsCntB[tmpY][tmpX];
+            }
+            else {
+                this.mMasuStsAnzR[tmpY][tmpX].ownEdgeSideOtherCnt++;
+                this.mMasuStsAnzR[tmpY][tmpX].goodPoint += 10 * this.mMasuStsCntB[tmpY][tmpX];
+            }
+            sum = 0;
+            sumOwn = 0;
+            for (var i = 0; i < this.mMasuCnt; i++) {
+                for (var j = 0; j < this.mMasuCnt; j++) {
+                    tmpBadPoint = 0;
+                    tmpGoodPoint = 0;
+                    if (this.getMasuStsEna(REVERSI_STS_BLACK, i, j) != 0) {
+                        sum += this.mMasuStsCntB[i][j]; // 相手の獲得予定枚数
+                        // *** 相手の獲得予定の最大数保持 *** //
+                        if (this.mMasuStsAnzR[tmpY][tmpX].max < this.mMasuStsCntB[i][j])
+                            this.mMasuStsAnzR[tmpY][tmpX].max = this.mMasuStsCntB[i][j];
+                        // *** 相手の獲得予定の最小数保持 *** //
+                        if (this.mMasuStsCntB[i][j] < this.mMasuStsAnzR[tmpY][tmpX].min)
+                            this.mMasuStsAnzR[tmpY][tmpX].min = this.mMasuStsCntB[i][j];
+                        this.mMasuStsAnzR[tmpY][tmpX].pointCnt++; // 相手の置ける場所の数
+                        if (this.getEdgeSideZero(i, j) == 0) {
+                            this.mMasuStsAnzR[tmpY][tmpX].edgeCnt++;
+                            tmpBadPoint = 100000 * this.mMasuStsCntB[i][j];
+                        }
+                        else if (this.getEdgeSideOne(i, j) == 0) {
+                            this.mMasuStsAnzR[tmpY][tmpX].edgeSideOneCnt++;
+                            tmpBadPoint = 0;
+                        }
+                        else if (this.getEdgeSideTwo(i, j) == 0) {
+                            this.mMasuStsAnzR[tmpY][tmpX].edgeSideTwoCnt++;
+                            tmpBadPoint = 1 * this.mMasuStsCntB[i][j];
+                        }
+                        else if (this.getEdgeSideThree(i, j) == 0) {
+                            this.mMasuStsAnzR[tmpY][tmpX].edgeSideThreeCnt++;
+                            tmpBadPoint = 1 * this.mMasuStsCntB[i][j];
+                        }
+                        else {
+                            this.mMasuStsAnzR[tmpY][tmpX].edgeSideOtherCnt++;
+                            tmpBadPoint = 1 * this.mMasuStsCntB[i][j];
+                        }
+                        if (tmpMasuEnaR[i][j] != 0)
+                            tmpBadPoint = 0; // ステータス変化していないなら
+                    }
+                    if (this.getMasuStsEna(REVERSI_STS_WHITE, i, j) != 0) {
+                        sum += this.mMasuStsCntW[i][j]; // 相手の獲得予定枚数
+                        // *** 相手の獲得予定の最大数保持 *** //
+                        if (this.mMasuStsAnzR[tmpY][tmpX].max < this.mMasuStsCntW[i][j])
+                            this.mMasuStsAnzR[tmpY][tmpX].max = this.mMasuStsCntW[i][j];
+                        // *** 相手の獲得予定の最小数保持 *** //
+                        if (this.mMasuStsCntW[i][j] < this.mMasuStsAnzR[tmpY][tmpX].min)
+                            this.mMasuStsAnzR[tmpY][tmpX].min = this.mMasuStsCntW[i][j];
+                        this.mMasuStsAnzR[tmpY][tmpX].pointCnt++; // 相手の置ける場所の数
+                        if (this.getEdgeSideZero(i, j) == 0) {
+                            this.mMasuStsAnzR[tmpY][tmpX].edgeCnt++;
+                            tmpBadPoint = 100000 * this.mMasuStsCntW[i][j];
+                        }
+                        else if (this.getEdgeSideOne(i, j) == 0) {
+                            this.mMasuStsAnzR[tmpY][tmpX].edgeSideOneCnt++;
+                            tmpBadPoint = 0;
+                        }
+                        else if (this.getEdgeSideTwo(i, j) == 0) {
+                            this.mMasuStsAnzR[tmpY][tmpX].edgeSideTwoCnt++;
+                            tmpBadPoint = 1 * this.mMasuStsCntW[i][j];
+                        }
+                        else if (this.getEdgeSideThree(i, j) == 0) {
+                            this.mMasuStsAnzR[tmpY][tmpX].edgeSideThreeCnt++;
+                            tmpBadPoint = 1 * this.mMasuStsCntW[i][j];
+                        }
+                        else {
+                            this.mMasuStsAnzR[tmpY][tmpX].edgeSideOtherCnt++;
+                            tmpBadPoint = 1 * this.mMasuStsCntW[i][j];
+                        }
+                        if (tmpMasuEnaW[i][j] != 0)
+                            tmpBadPoint = 0; // ステータス変化していないなら
+                    }
+                    if (this.getMasuStsEna(REVERSI_STS_BLUE, i, j) != 0) {
+                        sum += this.mMasuStsCntL[i][j]; // 相手の獲得予定枚数
+                        // *** 相手の獲得予定の最大数保持 *** //
+                        if (this.mMasuStsAnzR[tmpY][tmpX].max < this.mMasuStsCntL[i][j])
+                            this.mMasuStsAnzR[tmpY][tmpX].max = this.mMasuStsCntL[i][j];
+                        // *** 相手の獲得予定の最小数保持 *** //
+                        if (this.mMasuStsCntL[i][j] < this.mMasuStsAnzR[tmpY][tmpX].min)
+                            this.mMasuStsAnzR[tmpY][tmpX].min = this.mMasuStsCntL[i][j];
+                        this.mMasuStsAnzR[tmpY][tmpX].pointCnt++; // 相手の置ける場所の数
+                        if (this.getEdgeSideZero(i, j) == 0) {
+                            this.mMasuStsAnzR[tmpY][tmpX].edgeCnt++;
+                            tmpBadPoint = 100000 * this.mMasuStsCntL[i][j];
+                        }
+                        else if (this.getEdgeSideOne(i, j) == 0) {
+                            this.mMasuStsAnzR[tmpY][tmpX].edgeSideOneCnt++;
+                            tmpBadPoint = 0;
+                        }
+                        else if (this.getEdgeSideTwo(i, j) == 0) {
+                            this.mMasuStsAnzR[tmpY][tmpX].edgeSideTwoCnt++;
+                            tmpBadPoint = 1 * this.mMasuStsCntL[i][j];
+                        }
+                        else if (this.getEdgeSideThree(i, j) == 0) {
+                            this.mMasuStsAnzR[tmpY][tmpX].edgeSideThreeCnt++;
+                            tmpBadPoint = 1 * this.mMasuStsCntL[i][j];
+                        }
+                        else {
+                            this.mMasuStsAnzR[tmpY][tmpX].edgeSideOtherCnt++;
+                            tmpBadPoint = 1 * this.mMasuStsCntL[i][j];
+                        }
+                        if (tmpMasuEnaL[i][j] != 0)
+                            tmpBadPoint = 0; // ステータス変化していないなら
+                    }
+                    if (this.getMasuStsEna(REVERSI_STS_RED, i, j) != 0) {
+                        sumOwn += this.mMasuStsCntR[i][j]; // 自分の獲得予定枚数
+                        // *** 自分の獲得予定の最大数保持 *** //
+                        if (this.mMasuStsAnzR[tmpY][tmpX].ownMax < this.mMasuStsCntR[i][j])
+                            this.mMasuStsAnzR[tmpY][tmpX].ownMax = this.mMasuStsCntR[i][j];
+                        // *** 自分の獲得予定の最小数保持 *** //
+                        if (this.mMasuStsCntR[i][j] < this.mMasuStsAnzR[tmpY][tmpX].ownMin)
+                            this.mMasuStsAnzR[tmpY][tmpX].ownMin = this.mMasuStsCntR[i][j];
+                        this.mMasuStsAnzR[tmpY][tmpX].ownPointCnt++; // 自分の置ける場所の数
+                        if (this.getEdgeSideZero(i, j) == 0) {
+                            this.mMasuStsAnzR[tmpY][tmpX].ownEdgeCnt++;
+                            tmpGoodPoint = 100 * this.mMasuStsCntR[i][j];
+                        }
+                        else if (this.getEdgeSideOne(i, j) == 0) {
+                            this.mMasuStsAnzR[tmpY][tmpX].ownEdgeSideOneCnt++;
+                            tmpGoodPoint = 0;
+                        }
+                        else if (this.getEdgeSideTwo(i, j) == 0) {
+                            this.mMasuStsAnzR[tmpY][tmpX].ownEdgeSideTwoCnt++;
+                            tmpGoodPoint = 3 * this.mMasuStsCntR[i][j];
+                        }
+                        else if (this.getEdgeSideThree(i, j) == 0) {
+                            this.mMasuStsAnzR[tmpY][tmpX].ownEdgeSideThreeCnt++;
+                            tmpGoodPoint = 2 * this.mMasuStsCntR[i][j];
+                        }
+                        else {
+                            this.mMasuStsAnzR[tmpY][tmpX].ownEdgeSideOtherCnt++;
+                            tmpGoodPoint = 1 * this.mMasuStsCntR[i][j];
+                        }
+                        if (tmpMasuEnaR[i][j] != 0)
+                            tmpGoodPoint = 0; // ステータス変化していないなら
+                    }
+                    if (tmpBadPoint != 0)
+                        this.mMasuStsAnzR[tmpY][tmpX].badPoint += tmpBadPoint;
+                    if (tmpGoodPoint != 0)
+                        this.mMasuStsAnzR[tmpY][tmpX].goodPoint += tmpGoodPoint;
+                }
+            }
+            // *** 相手に取られる平均コマ数 *** //
+            if (this.getPointCnt(REVERSI_STS_BLACK) != 0 || this.getPointCnt(REVERSI_STS_WHITE) != 0 || this.getPointCnt(REVERSI_STS_BLUE) != 0) {
+                tmpD1 = sum;
+                tmpD2 = this.getPointCnt(REVERSI_STS_BLACK);
+                tmpD2 += this.getPointCnt(REVERSI_STS_WHITE);
+                tmpD2 += this.getPointCnt(REVERSI_STS_BLUE);
+                this.mMasuStsAnzR[tmpY][tmpX].avg = tmpD1 / tmpD2;
+            }
+            // *** 自分が取れる平均コマ数 *** //
+            if (this.getPointCnt(REVERSI_STS_RED) != 0) {
+                tmpD1 = sumOwn;
+                tmpD2 = this.getPointCnt(REVERSI_STS_RED);
+                this.mMasuStsAnzR[tmpY][tmpX].ownAvg = tmpD1 / tmpD2;
+            }
+            // *** 元に戻す *** //
+            this.mMasuSts = $.extend(true, [], tmpMasu);
+            this.makeMasuSts(REVERSI_STS_BLACK);
+            this.makeMasuSts(REVERSI_STS_WHITE);
+            this.makeMasuSts(REVERSI_STS_BLUE);
+            this.makeMasuSts(REVERSI_STS_RED);
+        }
+    };
+    ////////////////////////////////////////////////////////////////////////////////
+    /**	@brief			解析を行う
+     *	@fn				public AnalysisReversi(bPassEna: number, wPassEna: number, lPassEna: number, rPassEna: number) : void
+     *	@param[in]		bPassEna : number		1=黒パス有効
+     *	@param[in]		wPassEna : number		1=白パス有効
+     *	@param[in]		bPassEna : number		1=青パス有効
+     *	@param[in]		wPassEna : number		1=赤パス有効
+     *	@return			ありません
+     *	@author			Yuta Yoshinaga
+     *	@date			2017.06.01
+     */
+    ////////////////////////////////////////////////////////////////////////////////
+    Reversi.prototype.AnalysisReversi = function (bPassEna, wPassEna, lPassEna, rPassEna) {
         var tmpX;
         var tmpY;
         var sum;
@@ -852,12 +1554,20 @@ var Reversi = (function () {
                 this.mMasuStsAnzB[i][j].reset();
                 this.mMasuStsPassW[i][j] = 0;
                 this.mMasuStsAnzW[i][j].reset();
+                this.mMasuStsPassL[i][j] = 0;
+                this.mMasuStsAnzL[i][j].reset();
+                this.mMasuStsPassR[i][j] = 0;
+                this.mMasuStsAnzR[i][j].reset();
             }
         }
         this.AnalysisReversiBlack(); // 黒解析
         this.AnalysisReversiWhite(); // 白解析
+        this.AnalysisReversiBlue(); // 青解析
+        this.AnalysisReversiRed(); // 赤解析
         this.makeMasuSts(REVERSI_STS_BLACK);
         this.makeMasuSts(REVERSI_STS_WHITE);
+        this.makeMasuSts(REVERSI_STS_BLUE);
+        this.makeMasuSts(REVERSI_STS_RED);
         // *** パスマスを取得 *** //
         for (var i = 0; i < this.mMasuCnt; i++) {
             for (var j = 0; j < this.mMasuCnt; j++) {
@@ -868,6 +1578,14 @@ var Reversi = (function () {
                 if (this.mMasuStsPassW[i][j] != 0) {
                     if (wPassEna != 0)
                         this.mMasuStsEnaW[i][j] = 3;
+                }
+                if (this.mMasuStsPassL[i][j] != 0) {
+                    if (lPassEna != 0)
+                        this.mMasuStsEnaL[i][j] = 3;
+                }
+                if (this.mMasuStsPassR[i][j] != 0) {
+                    if (rPassEna != 0)
+                        this.mMasuStsEnaR[i][j] = 3;
                 }
             }
         }
@@ -920,8 +1638,12 @@ var Reversi = (function () {
         if (this.checkPara(y, 0, this.mMasuCnt) == 0 && this.checkPara(x, 0, this.mMasuCnt) == 0) {
             if (color == REVERSI_STS_BLACK)
                 ret = this.mMasuStsEnaB[y][x];
-            else
+            else if (color == REVERSI_STS_WHITE)
                 ret = this.mMasuStsEnaW[y][x];
+            else if (color == REVERSI_STS_BLUE)
+                ret = this.mMasuStsEnaL[y][x];
+            else
+                ret = this.mMasuStsEnaR[y][x];
         }
         return ret;
     };
@@ -941,8 +1663,12 @@ var Reversi = (function () {
         if (this.checkPara(y, 0, this.mMasuCnt) == 0 && this.checkPara(x, 0, this.mMasuCnt) == 0) {
             if (color == REVERSI_STS_BLACK)
                 ret = this.mMasuStsCntB[y][x];
-            else
+            else if (color == REVERSI_STS_WHITE)
                 ret = this.mMasuStsCntW[y][x];
+            else if (color == REVERSI_STS_BLUE)
+                ret = this.mMasuStsCntL[y][x];
+            else
+                ret = this.mMasuStsCntR[y][x];
         }
         return ret;
     };
@@ -981,6 +1707,10 @@ var Reversi = (function () {
             ret = 0;
         if (this.getColorEna(REVERSI_STS_WHITE) == 0)
             ret = 0;
+        if (this.getColorEna(REVERSI_STS_BLUE) == 0)
+            ret = 0;
+        if (this.getColorEna(REVERSI_STS_RED) == 0)
+            ret = 0;
         return ret;
     };
     ////////////////////////////////////////////////////////////////////////////////
@@ -1003,6 +1733,8 @@ var Reversi = (function () {
             this.revMasuSts(color, y, x);
             this.makeMasuSts(REVERSI_STS_BLACK);
             this.makeMasuSts(REVERSI_STS_WHITE);
+            this.makeMasuSts(REVERSI_STS_BLUE);
+            this.makeMasuSts(REVERSI_STS_RED);
             // *** 履歴保存 *** //
             if (this.mMasuHistCur < (this.mMasuCntMax * this.mMasuCntMax)) {
                 this.mMasuHist[this.mMasuHistCur].color = color;
@@ -1068,8 +1800,12 @@ var Reversi = (function () {
         if (this.checkPara(num, 0, (this.mMasuCnt * this.mMasuCnt)) == 0) {
             if (color == REVERSI_STS_BLACK)
                 ret = this.mMasuPointB[num];
-            else
+            else if (color == REVERSI_STS_WHITE)
                 ret = this.mMasuPointW[num];
+            else if (color == REVERSI_STS_BLUE)
+                ret = this.mMasuPointL[num];
+            else
+                ret = this.mMasuPointR[num];
         }
         return ret;
     };
@@ -1086,8 +1822,12 @@ var Reversi = (function () {
         var ret = 0;
         if (color == REVERSI_STS_BLACK)
             ret = this.mMasuPointCntB;
-        else
+        else if (color == REVERSI_STS_WHITE)
             ret = this.mMasuPointCntW;
+        else if (color == REVERSI_STS_BLUE)
+            ret = this.mMasuPointCntL;
+        else
+            ret = this.mMasuPointCntR;
         return ret;
     };
     ////////////////////////////////////////////////////////////////////////////////
@@ -1103,8 +1843,12 @@ var Reversi = (function () {
         var ret = 0;
         if (color == REVERSI_STS_BLACK)
             ret = this.mMasuBetCntB;
-        else
+        else if (color == REVERSI_STS_WHITE)
             ret = this.mMasuBetCntW;
+        else if (color == REVERSI_STS_BLUE)
+            ret = this.mMasuBetCntL;
+        else
+            ret = this.mMasuBetCntR;
         return ret;
     };
     ////////////////////////////////////////////////////////////////////////////////
@@ -1126,8 +1870,12 @@ var Reversi = (function () {
         if (this.checkPara(y, 0, this.mMasuCnt) == 0 && this.checkPara(x, 0, this.mMasuCnt) == 0) {
             if (color == REVERSI_STS_BLACK)
                 ret = this.mMasuStsPassB[y][x];
-            else
+            else if (color == REVERSI_STS_WHITE)
                 ret = this.mMasuStsPassW[y][x];
+            else if (color == REVERSI_STS_BLUE)
+                ret = this.mMasuStsPassL[y][x];
+            else
+                ret = this.mMasuStsPassR[y][x];
         }
         return ret;
     };
@@ -1176,8 +1924,12 @@ var Reversi = (function () {
         if (this.checkPara(y, 0, this.mMasuCnt) == 0 && this.checkPara(x, 0, this.mMasuCnt) == 0) {
             if (color == REVERSI_STS_BLACK)
                 ret = this.mMasuStsAnzB[y][x];
-            else
+            else if (color == REVERSI_STS_WHITE)
                 ret = this.mMasuStsAnzW[y][x];
+            else if (color == REVERSI_STS_BLUE)
+                ret = this.mMasuStsAnzL[y][x];
+            else
+                ret = this.mMasuStsAnzR[y][x];
         }
         return ret;
     };
