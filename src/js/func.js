@@ -30,9 +30,9 @@ $(document).ready(function () {
         });
     });
     //storage.clear();
-    var lReversiSetting = storage.getItem('appSetting');
+    var lReversiSetting = storage.getItem('appSetting2');
     if(lReversiSetting != null) reversiSetting = JSON.parse(lReversiSetting);
-    else                        storage.setItem('appSetting',JSON.stringify(reversiSetting));
+    else                        storage.setItem('appSetting2',JSON.stringify(reversiSetting));
     if(reversiSetting.mPlayerColor1 === undefined)      reversiSetting.mPlayerColor1 = '#000000';
     if(reversiSetting.mPlayerColor2 === undefined)      reversiSetting.mPlayerColor2 = '#ffffff';
     if(reversiSetting.mPlayerColor3 === undefined)      reversiSetting.mPlayerColor1 = '#0000ff';
@@ -103,7 +103,7 @@ $(document).ready(function () {
         reversiSetting.mBackGroundColor = $('#mBackGroundColor input').val();
         reversiSetting.mBorderColor = $('#mBorderColor input').val();
         
-        storage.setItem('appSetting',JSON.stringify(reversiSetting));       
+        storage.setItem('appSetting2',JSON.stringify(reversiSetting));       
         appInit();
         reversiPlay.setSetting(reversiSetting);
         reversiPlay.reset();
