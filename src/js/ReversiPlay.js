@@ -726,7 +726,7 @@ var ReversiPlay = (function () {
      */
     ////////////////////////////////////////////////////////////////////////////////
     ReversiPlay.prototype.gameEndAnimExec = function () {
-        var bCnt, wCnt, lCnt, rCnt;
+        var bCnt, wCnt, lCnt, rCnt, offsetCnt = 2;
         var ret = 0;
         if (this.mSetting.mEndAnim == DEF_END_ANIM_ON) {
             bCnt = this.mReversi.getBetCnt(REVERSI_STS_BLACK);
@@ -814,7 +814,8 @@ var ReversiPlay = (function () {
                     }
                 }
             }, this.mSetting.mEndInterVal, bCnt, wCnt);
-            ret = this.mSetting.mEndInterVal + this.mSetting.mEndDrawInterVal * (this.mSetting.mMasuCnt * this.mSetting.mMasuCnt);
+            //			ret = this.mSetting.mEndInterVal + this.mSetting.mEndDrawInterVal * (this.mSetting.mMasuCnt * this.mSetting.mMasuCnt);
+            ret = this.mSetting.mEndInterVal + this.mSetting.mEndDrawInterVal * (Math.max(bCnt, wCnt) + Math.max(lCnt, rCnt) + offsetCnt);
         }
         return ret;
     };
