@@ -97,20 +97,23 @@ var ReversiPlay = (function () {
                 this.sendDrawMsg(y, x); // 描画
                 this.drawUpdate(DEF_ASSIST_OFF); // その他コマ描画
                 if (this.mReversi.getGameEndSts() == 0) {
-                    tmpCol = this.getNextCol(tmpCol);
-                    if (this.mReversi.getColorEna(tmpCol) == 0) {
-                        if (this.mSetting.mMode == DEF_MODE_ONE) {
-                            cpuEna = 1;
+                    for (;;) {
+                        tmpCol = this.getNextCol(tmpCol);
+                        if (this.mReversi.getColorEna(tmpCol) == 0) {
+                            if (this.mSetting.mMode == DEF_MODE_ONE) {
+                                cpuEna = 1;
+                            }
+                            else {
+                                this.mCurColor = tmpCol;
+                                this.drawUpdate(this.mSetting.mAssist); // 次のプレイヤーコマ描画
+                            }
+                            break;
                         }
                         else {
-                            this.mCurColor = tmpCol;
-                            this.drawUpdate(this.mSetting.mAssist); // 次のプレイヤーコマ描画
+                            // *** パスメッセージ *** //
+                            this.reversiPlayPass(tmpCol);
+                            pass = 1;
                         }
-                    }
-                    else {
-                        // *** パスメッセージ *** //
-                        this.reversiPlayPass(tmpCol);
-                        pass = 1;
                     }
                 }
                 else {
@@ -126,20 +129,25 @@ var ReversiPlay = (function () {
         }
         else {
             if (this.mReversi.getGameEndSts() == 0) {
-                tmpCol = this.getNextCol(tmpCol);
-                if (this.mReversi.getColorEna(tmpCol) == 0) {
-                    if (this.mSetting.mMode == DEF_MODE_ONE) {
-                        update = 1;
-                        cpuEna = 1;
+                for (;;) {
+                    tmpCol = this.getNextCol(tmpCol);
+                    if (this.mReversi.getColorEna(tmpCol) == 0) {
+                        if (this.mSetting.mMode == DEF_MODE_ONE) {
+                            if (tmpCol != this.mCurColor)
+                                cpuEna = 1;
+                        }
+                        else {
+                            this.mCurColor = tmpCol;
+                            this.drawUpdate(this.mSetting.mAssist); // 次のプレイヤーコマ描画
+                        }
+                        break;
                     }
                     else {
-                        this.mCurColor = tmpCol;
+                        // *** パスメッセージ *** //
+                        if (this.mReversi.getBetCnt(tmpCol) != 0)
+                            this.reversiPlayPass(tmpCol);
+                        pass = 1;
                     }
-                }
-                else {
-                    // *** パスメッセージ *** //
-                    this.reversiPlayPass(tmpCol);
-                    pass = 1;
                 }
             }
             else {
@@ -147,7 +155,7 @@ var ReversiPlay = (function () {
                 this.reversiPlayEnd();
             }
         }
-        if (pass == 1) {
+        if (pass == 1 && cpuEna == 0) {
             if (this.mSetting.mMode == DEF_MODE_ONE) {
                 if (this.mSetting.mAssist == DEF_ASSIST_ON) {
                     // *** メッセージ送信 *** //
