@@ -1,1 +1,1 @@
-electron-packager src Reversi4Color --platform=win32 --arch=x64 --overwrite --electron-version=1.4.15
+electron-packager docs Reversi4Color --platform=win32 --arch=x64 --overwrite --electron-version=1.4.15

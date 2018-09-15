@@ -4,9 +4,9 @@ const package = require("./src/package.json");
 
 packager({
     name: package["name"],
-    dir: "./src",// ソースフォルダのパス
+    dir: "./docs",// ソースフォルダのパス
     out: "./",// 出力先フォルダのパス
-    icon: "./src/images/icon.ico",// アイコンのパス
+    icon: "./docs/images/icon.ico",// アイコンのパス
     platform: "win32",
     arch: "x64",
     version: "1.4.15",// Electronのバージョン
